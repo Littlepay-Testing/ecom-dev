@@ -1,17 +1,9 @@
 name: DEV Tester
 
 on: 
-  workflow_dispatch:
-    inputs:
-      amount:
-        description: Amount in GBP
-        default: 1.00
-        required: true
-      cardNumber:
-        description: Card Number (16 digits)
-        default: 4000000000001000
-        required: true
-
+  repository_dispatch:
+    types: 
+      - test-run
 jobs:
   build:
     runs-on: macOS-latest
@@ -22,4 +14,4 @@ jobs:
             curl --location --output artifacts.zip --header "PRIVATE-TOKEN: ${{ secrets.GITLAB_PRIVATE_TOKEN }}" "https://gitlab.com/api/v4/projects/20170807/jobs/732184328/artifacts"
             unzip -ao artifacts.zip
             rm artifacts.zip
-            fastlane dev_tester amount:${{ github.event.inputs.amount }} cardNumber:${{ github.event.inputs.cardNumber }}
+            fastlane dev_tester amount:${{ github.event.client_payload.amount }} cardNumber:${{ github.event.client_payload.cardNumber }}
